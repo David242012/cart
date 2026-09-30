@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>cart. — Family Shopping</title>
+<style>
+*{box-sizing:border-box}
+:root{
+ --bg:#f7f7f5;--surface:#fff;--surface2:#f0f0ed;--border:#deded8;
+ --text:#20201d;--muted:#777770;--accent:#315c4b;--accent2:#e7eee9;
+ --danger:#a34a42;--shadow:0 14px 40px rgba(25,25,20,.07)
+}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit}button{cursor:pointer}
+button:disabled{opacity:.45;cursor:not-allowed}
+.app{min-height:100vh}
+.topbar{height:70px;border-bottom:1px solid var(--border);background:rgba(255,255,255,.96);display:flex;align-items:center;justify-content:space-between;padding:0 34px;position:sticky;top:0;z-index:20}
+.brand{font-size:21px;font-weight:750;letter-spacing:-.05em}.brand span{color:var(--muted);font-weight:500}
+.top-right{display:flex;align-items:center;gap:10px}.avatar{width:37px;height:37px;border:1px solid var(--border);display:grid;place-items:center;background:var(--surface2);font-size:11px;font-weight:750}
+.btn{height:40px;border:1px solid var(--border);background:#fff;color:var(--text);padding:0 15px;border-radius:7px;font-size:13px;font-weight:650}
+.btn:hover{background:var(--surface2)}.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}.btn.primary:hover{filter:brightness(.94)}
+.btn.large{height:46px;padding:0 20px}.btn.full{width:100%}
+.screen{display:none}.screen.active{display:block}
+.center-screen{min-height:calc(100vh - 70px);display:flex;align-items:center;justify-content:center;padding:35px 18px}
+.auth-card{width:min(420px,100%);background:#fff;border:1px solid var(--border);padding:38px;box-shadow:var(--shadow)}
+.logo-big{font-size:31px;font-weight:800;letter-spacing:-.06em;margin-bottom:38px}.logo-big span{color:var(--muted);font-weight:500}
+.auth-card h1{font-size:25px;letter-spacing:-.04em;margin:0 0 8px}.auth-card .intro{font-size:13px;color:var(--muted);line-height:1.55;margin:0 0 27px}
+.tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:25px}.tab{flex:1;border:0;background:none;padding:11px 0;color:var(--muted);font-size:13px;font-weight:650;border-bottom:2px solid transparent}.tab.active{color:var(--text);border-bottom-color:var(--accent)}
+.form{display:flex;flex-direction:column;gap:16px}.field-label{display:block;font-size:10px;letter-spacing:.08em;color:var(--muted);font-weight:800;margin-bottom:6px}.field{width:100%;height:44px;border:1px solid var(--border);background:#fff;padding:0 12px;outline:none;color:var(--text);border-radius:5px}.field:focus{border-color:#a8aaa4}.field.big-code{font-size:19px;letter-spacing:.18em;text-transform:uppercase;text-align:center;font-weight:750}
+.helper{font-size:11px;color:var(--muted);line-height:1.5}
+.error{font-size:12px;color:var(--danger);display:none}.error.show{display:block}
+.choice-wrap{width:min(600px,100%)}.choice-title{text-align:center;margin-bottom:28px}.eyebrow{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:800}.choice-title h1{font-size:30px;letter-spacing:-.05em;margin:7px 0}.choice-title p{color:var(--muted);font-size:13px;margin:0}
+.choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.choice{background:#fff;border:1px solid var(--border);padding:28px;text-align:left;min-height:190px;transition:.15s}.choice:hover{border-color:#aaa9a1;box-shadow:var(--shadow)}.choice-icon{font-size:20px;margin-bottom:25px}.choice h2{font-size:16px;margin:0 0 7px;letter-spacing:-.02em}.choice p{font-size:12px;color:var(--muted);line-height:1.5;margin:0}
+.code-card{width:min(460px,100%);text-align:center;background:#fff;border:1px solid var(--border);padding:38px;box-shadow:var(--shadow)}.code-card h1{font-size:24px;letter-spacing:-.04em;margin:5px 0 8px}.code-card p{font-size:13px;color:var(--muted);line-height:1.5}.code-box{font-size:31px;font-weight:800;letter-spacing:.2em;padding:21px 10px;background:var(--surface2);border:1px solid var(--border);margin:25px 0;color:var(--accent)}
+.code-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}.share-status{height:18px;font-size:11px;color:var(--accent);margin-top:12px}
+.layout{width:min(1180px,calc(100% - 48px));margin:auto;padding:32px 0 70px;display:grid;grid-template-columns:240px minmax(0,1fr);gap:42px}.sidebar{position:sticky;top:102px;height:max-content}.cart-head .eyebrow{margin-bottom:5px}.cart-head h1{font-size:27px;letter-spacing:-.045em;margin:0 0 5px}.code-small{font-size:12px;color:var(--muted)}.side-section{margin-top:28px}.side-title{font-size:10px;letter-spacing:.09em;color:var(--muted);font-weight:800;margin-bottom:10px}.member{display:flex;align-items:center;gap:9px;padding:7px 0;font-size:13px}.member-avatar{width:29px;height:29px;border-radius:50%;display:grid;place-items:center;background:var(--surface2);border:1px solid var(--border);font-size:10px;font-weight:750}.member-name{flex:1}.tag{font-size:9px;color:var(--muted)}
+.progress{margin-top:24px}.progress-line{height:5px;background:var(--surface2)}.progress-fill{height:100%;background:var(--accent);width:0;transition:.2s}.progress-row{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:7px}
+.main-head{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin-bottom:22px}.main-head h2{font-size:20px;letter-spacing:-.03em;margin:0}.sub{font-size:12px;color:var(--muted);margin-top:4px}.controls{display:flex;gap:8px}.search{width:190px;height:40px;border:1px solid var(--border);background:#fff;padding:0 12px;border-radius:6px;outline:none}.search:focus{border-color:#aaa}
+.navtabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:17px}.navtab{border:0;background:none;padding:12px 18px 12px 2px;margin-right:20px;font-size:12px;font-weight:700;color:var(--muted);border-bottom:2px solid transparent}.navtab.active{color:var(--text);border-bottom-color:var(--accent)}
+.toolbar{border:1px solid var(--border);background:#fff;padding:9px;display:flex;justify-content:space-between;gap:10px;margin-bottom:17px}.filters{display:flex;gap:3px}.filter{border:0;background:none;color:var(--muted);padding:7px 10px;border-radius:5px;font-size:11px;font-weight:700}.filter.active{background:var(--surface2);color:var(--text)}
+.items{display:flex;flex-direction:column;gap:8px}.category{margin-top:20px}.category:first-child{margin-top:0}.category-head{display:flex;justify-content:space-between;padding:0 2px 8px;border-bottom:1px solid var(--border)}.category-title{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:850}.category-count{font-size:10px;color:var(--muted)}
+.item{background:#fff;border:1px solid var(--border);min-height:69px;display:flex;align-items:center;gap:12px;padding:11px 13px}.item:hover{background:#fcfcfb}.check{width:21px;height:21px;flex:none;border:1px solid #b8b8b0;background:#fff;display:grid;place-items:center;padding:0}.check.checked{background:var(--accent);border-color:var(--accent);color:#fff}.check svg{width:12px}.item-main{min-width:0;flex:1}.item-name{font-size:13px;font-weight:700}.item.purchased .item-name{text-decoration:line-through;color:#999}.item-meta{display:flex;gap:9px;margin-top:4px;color:var(--muted);font-size:10px}.note{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.qty{font-size:11px;color:var(--muted);white-space:nowrap}.menu{border:0;background:none;color:#999;padding:5px;font-size:16px}.empty{border:1px dashed #ccc;padding:40px 20px;text-align:center;color:var(--muted);font-size:12px}.empty strong{display:block;color:var(--text);margin-bottom:5px;font-size:13px}
+.add-panel{background:#fff;border:1px solid var(--border);padding:24px;max-width:610px}.add-panel h2{font-size:20px;letter-spacing:-.03em;margin:0 0 6px}.add-panel>p{font-size:12px;color:var(--muted);margin:0 0 24px}.add-grid{display:grid;grid-template-columns:2fr 1fr;gap:15px}.add-grid .wide{grid-column:1/-1}
+.shopping-bar{display:none;background:var(--accent);color:#fff;padding:12px 14px;margin-bottom:16px;align-items:center;justify-content:space-between}.shopping-bar.active{display:flex}.shopping-bar strong{font-size:12px}.shopping-bar span{opacity:.7;font-size:10px;margin-left:7px}.shopping-bar button{border:0;background:#fff;padding:7px 10px;font-size:10px;font-weight:750}
+.toast{position:fixed;right:22px;top:85px;width:min(350px,calc(100% - 44px));background:#fff;border:1px solid var(--border);box-shadow:var(--shadow);padding:14px;display:none;z-index:50}.toast.show{display:block}.toast-title{font-size:12px;font-weight:800}.toast-text{font-size:11px;color:var(--muted);margin-top:3px;line-height:1.4}
+.overlay{position:fixed;inset:0;background:rgba(20,20,17,.27);display:none;align-items:center;justify-content:center;padding:20px;z-index:40}.overlay.open{display:flex}.modal{width:min(450px,100%);background:#fff;border:1px solid var(--border);padding:26px;box-shadow:var(--shadow)}.modal h3{font-size:19px;margin:0}.modal p{font-size:12px;color:var(--muted);line-height:1.5}.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:20px}
+@media(max-width:820px){.layout{grid-template-columns:1fr;width:min(720px,calc(100% - 28px));padding-top:23px}.sidebar{position:static}.sidebar .side-section,.sidebar .progress{display:none}.main-head{margin-top:20px}.topbar{padding:0 15px}}
+@media(max-width:600px){.choice-grid{grid-template-columns:1fr}.auth-card{padding:28px}.main-head{flex-direction:column;align-items:flex-start}.controls{width:100%}.search{flex:1;width:auto}.toolbar{flex-direction:column}.add-grid{grid-template-columns:1fr}.code-actions{grid-template-columns:1fr}.top-right .btn{display:none}}
+
+.settings-gear{width:42px;height:42px;padding:0;display:grid;place-items:center;font-size:20px;border-radius:50%}
+.settings-modal{width:min(620px,calc(100vw - 32px));max-height:86vh;overflow:auto}
+.setting-section{padding:18px 0;border-top:1px solid var(--border)}
+.setting-section:first-of-type{border-top:0}
+.setting-title{font-weight:750;font-size:15px;margin-bottom:5px}
+.setting-help{font-size:13px;line-height:1.45;color:var(--muted);margin-bottom:14px}
+.money-input{position:relative}
+.money-input>span{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--muted);font-weight:700;z-index:1}
+.money-input .field{padding-left:30px}
+#settingsMembers{display:grid;gap:8px}
+.setting-member{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 12px;border:1px solid var(--border);border-radius:12px;background:var(--surface)}
+.setting-member-info{display:flex;align-items:center;gap:10px;min-width:0}
+.setting-member-name{font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.setting-member-role{font-size:11px;color:var(--muted);margin-top:2px}
+.remove-member{padding:7px 10px;color:var(--danger);border-color:#e5c5c1;background:#fff8f7}
+.dev-section{margin-top:8px}
+.dev-btn{color:var(--danger);border-color:#e5c5c1;background:#fff8f7}
+.dev-btn:hover{background:#fff0ee}
+@media(max-width:700px){
+ .settings-gear{width:40px;height:40px}
+ .controls{flex-wrap:wrap}
+ .search{flex:1;min-width:150px}
+}
+
+.icon-btn{width:38px;height:38px;border:1px solid var(--border);background:#fff;color:var(--text);display:grid;place-items:center;border-radius:7px;font-size:20px;padding:0}
+.icon-btn:hover{background:var(--surface2)}
+.settings-gear{width:40px;height:40px;border-radius:50%;font-size:19px}
+.modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:15px;margin-bottom:5px}
+.addFloating{position:fixed;right:28px;bottom:28px;width:58px;height:58px;border-radius:50%;border:0;background:var(--accent);color:#fff;font-size:30px;line-height:1;box-shadow:0 10px 25px rgba(25,25,20,.18);z-index:30}
+.addFloating:hover{filter:brightness(.94);transform:translateY(-1px)}
+@media(max-width:600px){.addFloating{right:18px;bottom:18px;width:54px;height:54px}}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">cart<span>.</span></div>
+  <div class="top-right" id="topRight"></div>
+</header>
+
+<!-- AUTH -->
+<section id="loadingScreen" class="screen active"><div class="center-screen"><div class="helper">Loading…</div></div></section>
+
+<section id="authScreen" class="screen">
+ <div class="center-screen">
+  <div class="auth-card">
+   <div class="logo-big">cart<span>.</span></div>
+   <div class="tabs">
+    <button class="tab active" id="loginTab">Log in</button>
+    <button class="tab" id="signupTab">Sign up</button>
+   </div>
+   <h1 id="authTitle">Welcome back</h1>
+   <p class="intro" id="authIntro">Log in to continue to your family shopping cart.</p>
+   <form class="form" id="authForm">
+    <div id="nameField" style="display:none">
+      <label class="field-label">YOUR NAME</label>
+      <input class="field" id="authName" maxlength="40" placeholder="e.g. Sarah">
+    </div>
+    <div>
+      <label class="field-label">EMAIL</label>
+      <input class="field" id="authEmail" type="email" required placeholder="you@example.com">
+    </div>
+    <div>
+      <label class="field-label">PASSWORD</label>
+      <input class="field" id="authPassword" type="password" required minlength="6" placeholder="••••••••">
+    </div>
+    <div class="error" id="authError"></div>
+    <button class="btn primary large full" id="authSubmit">Log in</button>
+   </form>
+   <p class="helper" style="margin-top:18px">Your account and carts are stored securely online and sync live across all your devices.</p>
+  </div>
+ </div>
+</section>
+
+<!-- CART SETUP -->
+<section id="setupScreen" class="screen">
+ <div class="center-screen">
+  <div class="choice-wrap">
+   <div class="choice-title">
+    <div class="eyebrow">Welcome, <span id="welcomeName"></span></div>
+    <h1>What would you like to do?</h1>
+    <p>Start your household cart or join one someone has already created.</p>
+   </div>
+   <div class="choice-grid">
+    <button class="choice" id="createChoice">
+      <div class="choice-icon">＋</div>
+      <h2>Create a cart</h2>
+      <p>Make a shared shopping list for your family and get a unique cart code.</p>
+    </button>
+    <button class="choice" id="joinChoice">
+      <div class="choice-icon">↗</div>
+      <h2>Join a cart</h2>
+      <p>Enter the code your family member sent you and start adding items.</p>
+    </button>
+   </div>
+   <div style="text-align:center;margin-top:22px"><button class="btn" id="setupLogout">Log out</button></div>
+  </div>
+ </div>
+</section>
+
+<!-- CODE SHARE -->
+<section id="codeScreen" class="screen">
+ <div class="center-screen">
+  <div class="code-card">
+   <div class="eyebrow">Your family cart</div>
+   <h1 id="createdCartName"></h1>
+   <p>Your cart is ready. Share this code with your family so they can join.</p>
+   <div class="code-box" id="createdCode"></div>
+   <div class="code-actions">
+    <button class="btn" id="shareBtn">Share code</button>
+    <button class="btn primary" id="continueBtn">Continue to cart</button>
+   </div>
+   <div class="share-status" id="shareStatus"></div>
+  </div>
+ </div>
+</section>
+
+<!-- SETTINGS -->
+<div class="overlay" id="settingsOverlay">
+ <div class="modal settings-modal">
+  <div class="modal-head">
+   <div>
+    <div class="eyebrow">Cart settings</div>
+    <h2>Settings</h2>
+   </div>
+   <button class="icon-btn" data-close="settingsOverlay" aria-label="Close">×</button>
+  </div>
+
+  <div id="leaderSettings">
+   <div class="setting-section">
+    <div class="setting-title">Shopping limits</div>
+    <div class="setting-help">Optional limits for this family cart. Only the cart leader can change these.</div>
+    <label class="field-label">CART BUDGET</label>
+    <div class="money-input"><span>€</span><input class="field" id="cartBudget" type="number" min="0" step="0.01" placeholder="No limit"></div>
+    <label class="field-label">SPEND LIMIT PER PERSON</label>
+    <div class="money-input"><span>€</span><input class="field" id="personBudget" type="number" min="0" step="0.01" placeholder="No limit"></div>
+    <div class="setting-help">Leave either field empty to keep that limit off.</div>
+    <button class="btn primary full" id="saveLimits">Save limits</button>
+   </div>
+
+   <div class="setting-section">
+    <div class="setting-title">Family members</div>
+    <div class="setting-help">Remove a person from this cart. They can be invited again later with the cart code.</div>
+    <div id="settingsMembers"></div>
+   </div>
+  </div>
+
+  <div class="setting-section">
+   <div class="setting-title">Account</div>
+   <div class="setting-help" id="accountInfo"></div>
+   <button class="btn full" id="logoutBtn" style="margin-bottom:8px">Log out</button>
+   <button class="btn dev-btn full" id="leaveCartBtn" style="display:none;margin-bottom:8px">Leave this cart</button>
+   <button class="btn dev-btn full" id="deleteCartBtn" style="display:none">Delete this cart for everyone</button>
+  </div>
+ </div>
+</div>
+
+<!-- MAIN APP -->
+<section id="appScreen" class="screen">
+ <div class="layout">
+  <aside class="sidebar">
+   <div class="cart-head">
+    <div class="eyebrow">Family cart</div>
+    <h1 id="cartName"></h1>
+    <div class="code-small">Code <strong id="cartCode"></strong></div>
+   </div>
+   <div class="side-section">
+    <div class="side-title">MEMBERS</div>
+    <div id="members"></div>
+   </div>
+   <div class="progress">
+    <div class="side-title">SHOPPING PROGRESS</div>
+    <div class="progress-line"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-row"><span id="progressText">0 of 0 bought</span><span id="progressPercent">0%</span></div>
+   </div>
+  </aside>
+
+  <main>
+   <div class="main-head">
+    <div>
+     <h2 id="pageTitle">Shopping list</h2>
+     <div class="sub" id="pageSub">Everything your family needs on one list.</div>
+    </div>
+    <div class="controls">
+      <input class="search" id="search" placeholder="Search items...">
+      <button class="btn primary" id="shoppingMode">Shopping mode</button>
+      <button class="icon-btn settings-gear" id="settingsBtn" aria-label="Cart settings" title="Cart settings">⚙</button>
+    </div>
+   </div>
+
+   <div class="navtabs">
+    <button class="navtab active" data-page="list">Shopping list</button>
+   </div>
+
+   <div id="listPage">
+    <div class="shopping-bar" id="shoppingBar">
+      <div><strong>Shopping mode</strong><span>Only items still needed are shown</span></div>
+      <button id="exitShopping">Exit</button>
+    </div>
+    <div class="toolbar">
+     <div class="filters">
+      <button class="filter active" data-filter="all">All</button>
+      <button class="filter" data-filter="needed">Needed</button>
+      <button class="filter" data-filter="bought">Bought</button>
+     </div>
+     <button class="btn" id="clearBought">Clear bought</button>
+    </div>
+    <div class="items" id="items"></div>
+   </div>
+
+   <div id="addPage" style="display:none">
+    <div class="add-panel">
+     <h2>Add something to the list</h2>
+     <p>Everyone in the cart can see what you add, and the shopper will know who requested it.</p>
+     <form class="form" id="addForm">
+      <div class="add-grid">
+       <div>
+        <label class="field-label">ITEM</label>
+        <input class="field" id="addName" required placeholder="e.g. Milk">
+       </div>
+       <div>
+        <label class="field-label">QUANTITY</label>
+        <input class="field" id="addQty" type="number" min="1" value="1" required>
+       </div>
+       <div>
+        <label class="field-label">CATEGORY</label>
+        <select class="field" id="addCategory">
+         <option>Produce</option><option>Meat</option><option>Dairy</option><option>Pantry</option><option>Drinks</option><option>Household</option><option>Other</option>
+        </select>
+       </div>
+       <div>
+        <label class="field-label">NOTE</label>
+        <input class="field" id="addNote" placeholder="Brand, size, preference...">
+       </div>
+      </div>
+      <button class="btn primary large" type="submit" style="margin-top:4px">Add to shopping list</button>
+     </form>
+    </div>
+   </div>
+  </main>
+ </div>
+ <button class="addFloating" id="floatingAdd" aria-label="Add item" title="Add item">+</button>
+</section>
+
+<div class="overlay" id="joinOverlay">
+ <div class="modal">
+  <h3>Join a family cart</h3>
+  <p>Enter the five-character code shared by the cart owner.</p>
+  <form class="form" id="joinForm">
+   <div><label class="field-label">CART CODE</label><input class="field big-code" id="joinCode" maxlength="5" required placeholder="ABC12"></div>
+   <div id="joinError" class="error"></div>
+   <div class="modal-actions"><button type="button" class="btn" data-close="joinOverlay">Cancel</button><button class="btn primary" type="submit">Join cart</button></div>
+  </form>
+ </div>
+</div>
+
+<div class="overlay" id="createOverlay">
+ <div class="modal">
+  <h3>Create your family cart</h3>
+  <p>Give your shared list a name. A unique code will be generated for your family.</p>
+  <form class="form" id="createForm">
+   <div><label class="field-label">CART NAME</label><input class="field" id="createCartName" required placeholder="e.g. Family Cart"></div>
+   <div class="modal-actions"><button type="button" class="btn" data-close="createOverlay">Cancel</button><button class="btn primary" type="submit">Create cart</button></div>
+  </form>
+ </div>
+</div>
+
+<div class="toast" id="toast"><div class="toast-title" id="toastTitle"></div><div class="toast-text" id="toastText"></div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+// ============================================================
+//  CONFIG — paste your values from Supabase > Project Settings > API
+// ============================================================
+const SUPABASE_URL = "https://osezhqmcrzpvfjfokfor.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9zZXpocW1jcnpwdmZqZm9rZm9yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA3OTI2MTIsImV4cCI6MjEwNjM2ODYxMn0.ZPIlElzfGT87KJrNWgR-EsK6QTPCA2m_KKAUFCyHNr4"; // the "anon public" key (NOT service_role)
+
+const CONFIGURED = !SUPABASE_ANON_KEY.startsWith("PASTE_");
+const sb = CONFIGURED ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+const ACTIVE_KEY = "cartActiveCartId";
+
+// ---------------- state ----------------
+let user = null;            // {id, email, name}
+let activeCartId = localStorage.getItem(ACTIVE_KEY);
+let cart = null;            // {id, code, name, leaderId, budget, perPersonLimit}
+let members = [];           // [{id, role}]
+let items = [];             // [{id, name, qty, category, note, addedBy, purchased, purchasedBy}]
+let names = {};             // userId -> display name
+let authMode = "login";
+let filter = "all";
+let shopping = false;
+let currentPage = "list";
+let realtimeChannel = null;
+let pollTimer = null;
+let refreshTimer = null;
+
+const $ = id => document.getElementById(id);
+function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
+function initials(n){return (n||"User").trim().split(/\s+/).map(x=>x[0]).join("").slice(0,2).toUpperCase()}
+function nameOf(id){return names[id] || "Former member"}
+function isLeader(){return !!(cart && user && cart.leaderId===user.id)}
+function errText(e){return (e && (e.message||e.error_description)) || "Something went wrong. Please try again."}
+
+let toastTimer;
+function toast(title,text){
+  $("toastTitle").textContent=title;
+  $("toastText").textContent=text||"";
+  const x=$("toast");x.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>x.classList.remove("show"),4200);
+}
+
+function showScreen(id){
+  document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));
+  $(id).classList.add("active");
+  renderTop();
+}
+
+function renderTop(){
+  const t=$("topRight");
+  if(!user){t.innerHTML="";return}
+  t.innerHTML=`<button class="btn" id="topCartButton">${cart?"Cart":"Set up cart"}</button><div class="avatar" title="${esc(user.name)}">${esc(initials(user.name))}</div>`;
+  $("topCartButton").onclick=()=>cart?showScreen("appScreen"):goSetup();
+}
+
+function goSetup(){
+  $("welcomeName").textContent=user.name;
+  showScreen("setupScreen");
+}
+
+// ---------------- auth ----------------
+function setAuth(mode){
+  authMode=mode;
+  const signup=mode==="signup";
+  $("loginTab").classList.toggle("active",!signup);
+  $("signupTab").classList.toggle("active",signup);
+  $("nameField").style.display=signup?"block":"none";
+  $("authTitle").textContent=signup?"Create your account":"Welcome back";
+  $("authIntro").textContent=signup?"Create an account to start your family cart.":"Log in to continue to your family shopping cart.";
+  $("authSubmit").textContent=signup?"Create account":"Log in";
+  $("authError").classList.remove("show");
+}
+$("loginTab").onclick=()=>setAuth("login");
+$("signupTab").onclick=()=>setAuth("signup");
+
+function authError(msg){const e=$("authError");e.textContent=msg;e.classList.add("show")}
+
+$("authForm").onsubmit=async e=>{
+  e.preventDefault();
+  if(!CONFIGURED){authError("Add your Supabase anon key at the top of the script first.");return}
+  const signup=authMode==="signup";
+  const name=$("authName").value.trim();
+  const email=$("authEmail").value.trim();
+  const password=$("authPassword").value;
+  if(signup && !name){authError("Please enter your name.");return}
+  $("authError").classList.remove("show");
+  const btn=$("authSubmit");btn.disabled=true;
+  try{
+    if(signup){
+      const {data,error}=await sb.auth.signUp({email,password,options:{data:{name},emailRedirectTo:location.href.split("#")[0]}});
+      if(error) throw error;
+      if(!data.session){
+        authError("Account created. Check your email and click the confirmation link, then log in.");
+        $("authError").style.color="var(--accent)";
+        setAuth("login");
+        $("authError").textContent="Account created. Check your email and click the confirmation link, then log in.";
+        $("authError").classList.add("show");
+        return;
+      }
+    }else{
+      const {error}=await sb.auth.signInWithPassword({email,password});
+      if(error) throw error;
+    }
+    $("authError").style.color="";
+    // onAuthStateChange handles the rest
+  }catch(err){
+    $("authError").style.color="";
+    authError(errText(err));
+  }finally{btn.disabled=false}
+};
+
+async function logout(){
+  stopRealtime();
+  await sb.auth.signOut();
+}
+$("logoutBtn").onclick=async()=>{$("settingsOverlay").classList.remove("open");await logout()};
+$("setupLogout").onclick=logout;
+
+function resetState(){
+  user=null;cart=null;members=[];items=[];names={};
+  renderTop();
+}
+
+async function onSignedIn(session){
+  const u=session.user;
+  let name=(u.user_metadata&&u.user_metadata.name)||"";
+  const {data:prof}=await sb.from("profiles").select("display_name").eq("id",u.id).maybeSingle();
+  if(prof&&prof.display_name) name=prof.display_name;
+  if(!name) name=(u.email||"User").split("@")[0];
+  user={id:u.id,email:u.email,name};
+  await routeAfterAuth();
+}
+
+async function routeAfterAuth(){
+  const {data,error}=await sb.from("cart_members").select("cart_id, carts(id)").eq("user_id",user.id);
+  if(error){toast("Could not load your carts",errText(error));goSetup();return}
+  const ids=(data||[]).map(r=>r.cart_id);
+  if(!ids.length){activeCartId=null;localStorage.removeItem(ACTIVE_KEY);cart=null;goSetup();return}
+  if(!ids.includes(activeCartId)) activeCartId=ids[0];
+  localStorage.setItem(ACTIVE_KEY,activeCartId);
+  await loadCart();
+  startRealtime();
+  showScreen("appScreen");
+}
+
+// ---------------- data ----------------
+async function loadCart(){
+  if(!activeCartId) return;
+  const [c,m,i,p]=await Promise.all([
+    sb.from("carts").select("*").eq("id",activeCartId).maybeSingle(),
+    sb.from("cart_members").select("user_id, role, joined_at").eq("cart_id",activeCartId).order("joined_at"),
+    sb.from("items").select("*").eq("cart_id",activeCartId).order("created_at",{ascending:false}),
+    sb.from("profiles").select("id, display_name")
+  ]);
+  if(!c.data){ // removed from cart or cart deleted
+    cart=null;activeCartId=null;localStorage.removeItem(ACTIVE_KEY);stopRealtime();
+    toast("You no longer have access to that cart","");
+    goSetup();return;
+  }
+  cart={id:c.data.id,code:c.data.code,name:c.data.name,leaderId:c.data.leader_id,budget:c.data.budget,perPersonLimit:c.data.per_person_limit};
+  members=(m.data||[]).map(r=>({id:r.user_id,role:r.role}));
+  items=(i.data||[]).map(r=>({id:r.id,name:r.name,qty:r.qty,category:r.category,note:r.note,addedBy:r.added_by,purchased:r.purchased,purchasedBy:r.purchased_by}));
+  (p.data||[]).forEach(r=>names[r.id]=r.display_name);
+  if(names[user.id]) user.name=names[user.id];
+  renderApp();
+  renderTop();
+}
+
+function scheduleRefresh(){
+  clearTimeout(refreshTimer);
+  refreshTimer=setTimeout(()=>{if(user&&activeCartId) loadCart()},150);
+}
+
+function startRealtime(){
+  stopRealtime();
+  const id=activeCartId;
+  realtimeChannel=sb.channel("cart-"+id)
+    .on("postgres_changes",{event:"INSERT",schema:"public",table:"items",filter:`cart_id=eq.${id}`},async payload=>{
+      await loadCart();
+      const r=payload.new;
+      if(r && r.added_by!==user.id) toast(`${nameOf(r.added_by)} added to the cart`,`${r.qty} × ${r.name}`);
+    })
+    .on("postgres_changes",{event:"UPDATE",schema:"public",table:"items",filter:`cart_id=eq.${id}`},async payload=>{
+      await loadCart();
+      const r=payload.new,o=payload.old||{};
+      if(r && r.purchased && !o.purchased && r.purchased_by && r.purchased_by!==user.id) toast(`${nameOf(r.purchased_by)} bought an item`,`“${r.name}” is checked off.`);
+    })
+    .on("postgres_changes",{event:"DELETE",schema:"public",table:"items"},scheduleRefresh)
+    .on("postgres_changes",{event:"*",schema:"public",table:"cart_members"},scheduleRefresh)
+    .on("postgres_changes",{event:"*",schema:"public",table:"carts"},scheduleRefresh)
+    .on("postgres_changes",{event:"*",schema:"public",table:"profiles"},scheduleRefresh)
+    .subscribe();
+  // safety net in case a websocket drops
+  pollTimer=setInterval(()=>{if(document.visibilityState==="visible") scheduleRefresh()},20000);
+}
+function stopRealtime(){
+  if(realtimeChannel){sb.removeChannel(realtimeChannel);realtimeChannel=null}
+  clearInterval(pollTimer);
+}
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&user&&activeCartId) scheduleRefresh()});
+
+// ---------------- create / join ----------------
+$("createChoice").onclick=()=>{
+  $("createCartName").value=(user?.name||"Your")+" Family";
+  $("createOverlay").classList.add("open");
+};
+$("joinChoice").onclick=()=>$("joinOverlay").classList.add("open");
+document.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>$(b.dataset.close).classList.remove("open"));
+document.querySelectorAll(".overlay").forEach(o=>o.onclick=e=>{if(e.target===o)o.classList.remove("open")});
+
+$("createForm").onsubmit=async e=>{
+  e.preventDefault();
+  const btn=e.target.querySelector("button.primary");btn.disabled=true;
+  try{
+    const {data,error}=await sb.rpc("create_cart",{p_name:$("createCartName").value.trim()});
+    if(error) throw error;
+    activeCartId=data.id;
+    localStorage.setItem(ACTIVE_KEY,data.id);
+    await loadCart();
+    startRealtime();
+    $("createdCartName").textContent=data.name;
+    $("createdCode").textContent=data.code;
+    $("createOverlay").classList.remove("open");
+    $("shareStatus").textContent="";
+    showScreen("codeScreen");
+  }catch(err){toast("Could not create cart",errText(err))}
+  finally{btn.disabled=false}
+};
+
+$("joinForm").onsubmit=async e=>{
+  e.preventDefault();
+  const err=$("joinError");err.classList.remove("show");
+  const code=$("joinCode").value.trim().toUpperCase();
+  const btn=e.target.querySelector("button.primary");btn.disabled=true;
+  try{
+    const {data,error}=await sb.rpc("join_cart",{p_code:code});
+    if(error) throw error;
+    activeCartId=data.id;
+    localStorage.setItem(ACTIVE_KEY,data.id);
+    $("joinOverlay").classList.remove("open");
+    $("joinCode").value="";
+    await loadCart();
+    startRealtime();
+    showScreen("appScreen");
+  }catch(ex){
+    err.textContent=/not found/i.test(errText(ex))?"Cart not found. Double-check the code with whoever invited you.":errText(ex);
+    err.classList.add("show");
+  }finally{btn.disabled=false}
+};
+
+$("shareBtn").onclick=async()=>{
+  if(!cart) return;
+  const text=`Join our ${cart.name} shopping cart. Code: ${cart.code}`;
+  try{
+    if(navigator.share){await navigator.share({text});$("shareStatus").textContent="Invite shared.";return}
+    await navigator.clipboard.writeText(text);
+    $("shareStatus").textContent="Invite copied to clipboard.";
+  }catch{
+    $("shareStatus").textContent=`Share code: ${cart.code}`;
+  }
+};
+$("continueBtn").onclick=()=>showScreen("appScreen");
+
+// ---------------- render ----------------
+function renderApp(){
+  if(!cart) return;
+  $("cartName").textContent=cart.name;
+  $("cartCode").textContent=cart.code;
+  renderMembers();
+  renderProgress();
+  renderItems();
+}
+
+function renderMembers(){
+  $("members").innerHTML=members.map(m=>`
+    <div class="member">
+      <div class="member-avatar">${esc(initials(nameOf(m.id)))}</div>
+      <div class="member-name">${esc(nameOf(m.id))}${m.id===user.id?' <span class="tag">(you)</span>':''}</div>
+      ${m.role==="leader"?'<span class="tag">LEADER</span>':''}
+    </div>`).join("");
+}
+
+function renderProgress(){
+  const total=items.length;
+  const bought=items.filter(x=>x.purchased).length;
+  const p=total?Math.round(bought/total*100):0;
+  $("progressFill").style.width=p+"%";
+  $("progressText").textContent=`${bought} of ${total} bought`;
+  $("progressPercent").textContent=p+"%";
+}
+
+function renderItems(){
+  if(!cart) return;
+  const q=$("search").value.trim().toLowerCase();
+  const visible=items.filter(i=>{
+    if(shopping && i.purchased) return false;
+    if(filter==="needed" && i.purchased) return false;
+    if(filter==="bought" && !i.purchased) return false;
+    return !q || (i.name+" "+i.note+" "+i.category+" "+nameOf(i.addedBy)).toLowerCase().includes(q);
+  });
+  const groups={};
+  visible.forEach(i=>(groups[i.category]??=[]).push(i));
+  const order=["Produce","Meat","Dairy","Pantry","Drinks","Household","Other"];
+  const el=$("items");
+  if(!visible.length){
+    el.innerHTML=`<div class="empty"><strong>${shopping?"Nothing left to shop for":(items.length?"No items found":"Your cart is empty")}</strong>${shopping?"Everything on the list has been purchased.":(items.length?"Try another search or filter.":"Tap the + button to add the first item.")}</div>`;
+    return;
+  }
+  const cats=order.filter(c=>groups[c]).concat(Object.keys(groups).filter(c=>!order.includes(c)));
+  el.innerHTML=cats.map(c=>`
+    <section class="category">
+      <div class="category-head">
+        <div class="category-title">${esc(c)}</div>
+        <div class="category-count">${groups[c].length} item${groups[c].length===1?"":"s"}</div>
+      </div>
+      ${groups[c].map(itemHTML).join("")}
+    </section>`).join("");
+}
+
+function itemHTML(i){
+  return `
+    <div class="item ${i.purchased?"purchased":""}">
+      <button class="check ${i.purchased?"checked":""}" data-action="toggle" data-id="${esc(i.id)}">
+        ${i.purchased?'<svg viewBox="0 0 16 16" fill="none"><path d="m3 8 3 3 7-7" stroke="currentColor" stroke-width="2"/></svg>':''}
+      </button>
+      <div class="item-main">
+        <div class="item-name">${esc(i.name)}</div>
+        <div class="item-meta">
+          <span>Added by ${esc(nameOf(i.addedBy))}</span>
+          ${i.note?`<span class="note">· ${esc(i.note)}</span>`:""}
+          ${i.purchased&&i.purchasedBy?`<span>· Bought by ${esc(nameOf(i.purchasedBy))}</span>`:""}
+        </div>
+      </div>
+      <div class="qty">${i.qty} ${i.qty===1?"unit":"units"}</div>
+      <button class="menu" data-action="delete" data-id="${esc(i.id)}" title="Remove item">⋯</button>
+    </div>`;
+}
+
+// ---------------- item actions ----------------
+document.querySelectorAll(".navtab").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".navtab").forEach(x=>x.classList.remove("active"));
+  b.classList.add("active");
+  showPage(b.dataset.page);
+});
+function showPage(p){
+  currentPage=p;
+  $("listPage").style.display=p==="list"?"block":"none";
+  $("addPage").style.display=p==="add"?"block":"none";
+  $("pageTitle").textContent=p==="list"?"Shopping list":"Add to list";
+  $("pageSub").textContent=p==="list"?"Everything your family needs on one list.":"Add something your family should pick up.";
+}
+
+$("addForm").onsubmit=async e=>{
+  e.preventDefault();
+  if(!cart) return;
+  const btn=e.target.querySelector("button[type=submit]");btn.disabled=true;
+  const row={
+    cart_id:cart.id,
+    name:$("addName").value.trim(),
+    qty:Math.max(1,parseInt($("addQty").value,10)||1),
+    category:$("addCategory").value,
+    note:$("addNote").value.trim(),
+    added_by:user.id
+  };
+  const {error}=await sb.from("items").insert(row);
+  btn.disabled=false;
+  if(error){toast("Could not add item",errText(error));return}
+  e.target.reset();
+  $("addQty").value=1;
+  document.querySelector('[data-page="list"]').click();
+  await loadCart();
+  toast("Added to shopping list","Everyone in the cart can see this item now.");
+};
+
+$("items").onclick=async e=>{
+  const b=e.target.closest("[data-action]");
+  if(!b) return;
+  const i=items.find(x=>x.id===b.dataset.id);
+  if(!i) return;
+  if(b.dataset.action==="toggle"){
+    const nowPurchased=!i.purchased;
+    i.purchased=nowPurchased;i.purchasedBy=nowPurchased?user.id:null;renderApp(); // instant feedback
+    const {error}=await sb.from("items").update({purchased:nowPurchased,purchased_by:nowPurchased?user.id:null}).eq("id",i.id);
+    if(error){toast("Could not update item",errText(error));}
+    else if(nowPurchased) toast("Item purchased",`${nameOf(i.addedBy)} can see that “${i.name}” was bought.`);
+    await loadCart();
+  }
+  if(b.dataset.action==="delete" && confirm(`Remove “${i.name}” from the list?`)){
+    const {error}=await sb.from("items").delete().eq("id",i.id);
+    if(error) toast("Could not remove item",errText(error));
+    await loadCart();
+  }
+};
+
+document.querySelectorAll(".filter").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".filter").forEach(x=>x.classList.remove("active"));
+  b.classList.add("active");
+  filter=b.dataset.filter;
+  renderItems();
+});
+$("search").oninput=renderItems;
+
+$("clearBought").onclick=async()=>{
+  if(!cart) return;
+  const n=items.filter(x=>x.purchased).length;
+  if(n && confirm(`Remove ${n} purchased item${n===1?"":"s"}?`)){
+    const {error}=await sb.from("items").delete().eq("cart_id",cart.id).eq("purchased",true);
+    if(error) toast("Could not clear items",errText(error));
+    await loadCart();
+  }
+};
+
+$("shoppingMode").onclick=()=>{
+  shopping=true;
+  $("shoppingBar").classList.add("active");
+  $("shoppingMode").style.display="none";
+  renderItems();
+};
+$("exitShopping").onclick=()=>{
+  shopping=false;
+  $("shoppingBar").classList.remove("active");
+  $("shoppingMode").style.display="";
+  renderItems();
+};
+
+$("floatingAdd").onclick=()=>{
+  document.querySelectorAll(".navtab").forEach(x=>x.classList.remove("active"));
+  showPage("add");
+};
+
+// ---------------- settings ----------------
+function openSettings(){
+  if(!cart) return;
+  $("settingsOverlay").classList.add("open");
+  const leader=isLeader();
+  $("leaderSettings").style.display="block";
+  $("cartBudget").value=cart.budget??"";
+  $("personBudget").value=cart.perPersonLimit??"";
+  document.querySelectorAll("#leaderSettings .setting-section:first-child").forEach(s=>s.style.display=leader?"block":"none");
+  $("accountInfo").textContent=`Signed in as ${user.name} (${user.email})`;
+  $("leaveCartBtn").style.display=leader?"none":"block";
+  $("deleteCartBtn").style.display=leader?"block":"none";
+
+  $("settingsMembers").innerHTML=members.map(m=>{
+    const canRemove=leader && m.id!==cart.leaderId;
+    return `<div class="setting-member">
+      <div class="setting-member-info">
+        <div class="member-avatar">${esc(initials(nameOf(m.id)))}</div>
+        <div><div class="setting-member-name">${esc(nameOf(m.id))}</div><div class="setting-member-role">${m.role==="leader"?"Cart leader":"Member"}</div></div>
+      </div>
+      ${canRemove?`<button class="btn remove-member" data-remove-member="${esc(m.id)}">Remove</button>`:""}
+    </div>`;
+  }).join("")||'<div class="setting-help">No members yet.</div>';
+
+  document.querySelectorAll("[data-remove-member]").forEach(btn=>{
+    btn.onclick=async()=>{
+      const id=btn.dataset.removeMember;
+      if(!confirm(`Remove ${nameOf(id)} from this cart? Items they added will be removed too.`)) return;
+      const {error}=await sb.rpc("remove_member",{p_cart:cart.id,p_user:id});
+      if(error){toast("Could not remove member",errText(error));return}
+      await loadCart();
+      openSettings();
+    };
+  });
+}
+$("settingsBtn").onclick=openSettings;
+
+$("saveLimits").onclick=async()=>{
+  if(!isLeader()) return;
+  const b=$("cartBudget").value,p=$("personBudget").value;
+  const {error}=await sb.from("carts").update({
+    budget:b===""?null:Math.max(0,Number(b)),
+    per_person_limit:p===""?null:Math.max(0,Number(p))
+  }).eq("id",cart.id);
+  if(error){toast("Could not save limits",errText(error));return}
+  $("settingsOverlay").classList.remove("open");
+  await loadCart();
+  toast("Cart settings saved.","Your optional spending limits were updated.");
+};
+
+async function afterLeaving(){
+  stopRealtime();
+  cart=null;members=[];items=[];activeCartId=null;
+  localStorage.removeItem(ACTIVE_KEY);
+  $("settingsOverlay").classList.remove("open");
+  await routeAfterAuth();
+}
+
+$("leaveCartBtn").onclick=async()=>{
+  if(!confirm("Leave this cart? You can rejoin later with the cart code.")) return;
+  const {error}=await sb.from("cart_members").delete().eq("cart_id",cart.id).eq("user_id",user.id);
+  if(error){toast("Could not leave cart",errText(error));return}
+  await afterLeaving();
+};
+
+$("deleteCartBtn").onclick=async()=>{
+  if(!isLeader()) return;
+  if(!confirm(`Delete “${cart.name}” for everyone? All items and members will be removed. This cannot be undone.`)) return;
+  const {error}=await sb.from("carts").delete().eq("id",cart.id);
+  if(error){toast("Could not delete cart",errText(error));return}
+  await afterLeaving();
+};
+
+// ---------------- boot ----------------
+(async function init(){
+  if(!CONFIGURED){
+    showScreen("authScreen");
+    authError("Setup needed: paste your Supabase anon public key into SUPABASE_ANON_KEY at the top of the script.");
+    return;
+  }
+  sb.auth.onAuthStateChange((event,session)=>{
+    if(event==="SIGNED_OUT"){resetState();showScreen("authScreen");return}
+    if(event==="SIGNED_IN" && session && (!user || user.id!==session.user.id)){
+      // defer to avoid deadlocking inside the auth callback
+      setTimeout(()=>onSignedIn(session),0);
+    }
+  });
+  const {data}=await sb.auth.getSession();
+  if(!data.session) showScreen("authScreen");
+  // if a session exists, onAuthStateChange fires SIGNED_IN (INITIAL_SESSION) handling below
+  else if(!user) await onSignedIn(data.session);
+})();
+</script>
+</body>
+</html>
